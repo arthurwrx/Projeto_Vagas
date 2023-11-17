@@ -7,6 +7,8 @@
 import PySimpleGUI as sg 
 from botcity.web import WebBot, Browser, PageLoadStrategy
 from botcity.web.browsers.chrome import default_options
+from botcity.web import By
+
 
 def tela_inicial():
 
@@ -60,12 +62,37 @@ def config_navegacao():
         page_load_strategy=PageLoadStrategy.NORMAL)
     
     # Opens the browser on the BotCity website.
-    bot.browse("https://botcity.dev")
+    bot.browse("https://www.google.com/")
 
-    # Using navigate_to will have the same effect.
-    bot.navigate_to("https://botcity.dev")
+    # Import for the By enum.
+                                      
+    
+    ## Abre o google
+    pesquisa = bot.find_element("//textarea[@id='APjFqb']",By.XPATH)
+    pesquisa.send_keys("PagSeguro gupy")
+
+    bot.wait(5000)
+    ## Pesquisa a empresa
+    pesquisa = bot.find_element("//input[@name='btnK']",By.XPATH)
+    pesquisa.click()
+    ##Pesquisa google
+    pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > h3",By.CSS_SELECTOR)
+    pesquisa.click()
+
+
+
+
+
+    
+    
+    
+    
+    
 
 config_navegacao()
+
+
+
 
 
 
