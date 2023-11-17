@@ -5,6 +5,8 @@
 """
 
 import PySimpleGUI as sg 
+from botcity.web import WebBot, Browser, PageLoadStrategy
+from botcity.web.browsers.chrome import default_options
 
 def tela_inicial():
 
@@ -38,4 +40,37 @@ def tela_inicial():
                 break
 
             # elif event == 'Executar':
-tela_inicial()
+
+
+def config_navegacao():
+
+    # Instantiate the WebBot.
+    bot = WebBot()
+    # Configure whether or not to run on headless mode.
+    bot.headless = False
+    bot.browser = Browser.CHROME
+    bot.driver_path = "chromedriver.exe"
+    download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
+
+    def_options = default_options(
+
+        headless=bot.headless,
+        download_folder_path=bot.download_folder_path,
+        user_data_dir= None,  # Informing None here will generate a temporary directory
+        page_load_strategy=PageLoadStrategy.NORMAL)
+    
+    # Opens the browser on the BotCity website.
+    bot.browse("https://botcity.dev")
+
+    # Using navigate_to will have the same effect.
+    bot.navigate_to("https://botcity.dev")
+
+config_navegacao()
+
+
+
+
+    
+
+
+
