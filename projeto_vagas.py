@@ -121,7 +121,7 @@ def captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas):
             i += 1
 
         except NoSuchElementException:
-            pass  # Sai do loop while se o elemento não for encontrado
+            break  # Sai do loop while se o elemento não for encontrado
     
 
 
