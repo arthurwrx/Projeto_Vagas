@@ -121,11 +121,23 @@ def captura_vagas():
         except NoSuchElementException:
             break  # Sai do loop while se o elemento não for encontrado
     
+    try: 
+        proxima_pagina = bot.find_element("#job-listing > div.sc-d868c80d-10.jwUJDp > nav > ul > li:nth-child(5) > button",By.CSS_SELECTOR)
+        proxima_pagina.click()
+        captura_vagas()
+
+    except:
+        print("deu ruim")
+
+
+
+    
+    
 
 
 config_navegacao()
 captura_vagas()
-print(nome_das_vagas)
+print(len(nome_das_vagas))
 
 
 
