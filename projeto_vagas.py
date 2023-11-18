@@ -53,8 +53,6 @@ def tela_inicial():
 
 def config_navegacao():
 
-    # Instantiate the WebBot.
-    bot = WebBot()
     # Configure whether or not to run on headless mode.
     bot.headless = False
     bot.browser = Browser.CHROME
@@ -97,7 +95,7 @@ def config_navegacao():
 
 
 
-def captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas):
+def captura_vagas():
    
     i = 1
     while i < 11:
@@ -126,7 +124,8 @@ def captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas):
 
 
 config_navegacao()
-captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas)
+captura_vagas()
+print(nome_das_vagas)
 
 
 
