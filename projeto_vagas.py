@@ -11,6 +11,11 @@ from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
 import openpyxl 
 
+nome_das_vagas = []
+localidades_das_vagas = []
+tipos_vagas = []
+bot = WebBot()
+
 
 def tela_inicial():
 
@@ -83,7 +88,6 @@ def config_navegacao():
     bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
     pesquisa.click()
     
-    ## Muda para 50 Pessoas
     gupy = bot.find_element("#radix-3 > div.sc-fYaxgZ.kMYmhe > button",By.CSS_SELECTOR)
     gupy.click()
 
@@ -91,21 +95,13 @@ def config_navegacao():
     bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
     gupy.click() 
 
-    gupy = bot.find_element("#job-listing > div.sc-d868c80d-8.bOUgAQ > div:nth-child(2) > div > div > div > div",By.CSS_SELECTOR)
-    bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
-    gupy.click()
 
-    ##### Armazenamento das vagas
 
-    nome_das_vagas = []
-    localidades_das_vagas = []
-    tipos_vagas = []
-
+def captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas):
+   
     i = 1
-
-
-    ###Captura os elementos e joga nas listas
     while i < 11:
+        
         nome_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-5"
         local_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-6"
         tipo_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-7"
@@ -122,55 +118,15 @@ def config_navegacao():
             tipo_vaga = bot.find_element(tipo_vaga_selector,By.CSS_SELECTOR)
             tipo_da_vaga = tipo_vaga.text
             tipos_vagas.append(tipo_da_vaga)
-        
             i += 1
+
         except NoSuchElementException:
-            break  # Sai do loop while se o elemento não for encontrado
+            pass  # Sai do loop while se o elemento não for encontrado
     
-    print(nome_das_vagas)
-    print(localidades_das_vagas)
-    print(tipos_vagas)
 
-
-    nome_vaga = bot.find_element("#job-listing > ul > li:nth-child(1) > a > div > div.sc-d868c80d-5",By.CSS_SELECTOR)
-    print(nome_vaga.text)
-
-    local_vaga_selector = bot.find_element("#job-listing > ul > li:nth-child(1) > a > div > div.sc-d868c80d-6",By.CSS_SELECTOR)
-    print(local_vaga_selector.text)
-
-    tipo_vaga_selector = bot.find_element("#job-listing > ul > li:nth-child(1) > a > div > div.sc-d868c80d-7",By.CSS_SELECTOR)
-    print(tipo_vaga_selector.text)
-
-
-
-
-# Supondo que você tenha iniciado o driver do Selenium, por exemplo:
-# driver = webdriver.Chrome()
-
-
-
-
-
-
-
-
-   
-
-
-#job-listing > ul > li:nth-child(1) > a > div > div.sc-d868c80d-5.ldoedB
-
-
-
-
-
-
-    
-    
-    
-    
-    
 
 config_navegacao()
+captura_vagas(nome_das_vagas,localidades_das_vagas,tipos_vagas)
 
 
 
