@@ -16,8 +16,7 @@ nome_das_vagas = []
 localidades_das_vagas = []
 tipos_vagas = []
 bot = WebBot()
-hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%m'))
-
+hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%Mm'))
 
 
 ##Controle da tela
@@ -82,10 +81,7 @@ def config_navegacao(nome_empresa):
     # Opens the browser on the BotCity website.
     
     bot.browse("https://www.google.com/")
-
-    # Import for the By enum.
                                       
-    
     ## Abre o google
     pesquisa = bot.find_element("//textarea[@id='APjFqb']",By.XPATH)
     pesquisa.send_keys(f'{nome_empresa} gupy')
@@ -95,7 +91,7 @@ def config_navegacao(nome_empresa):
     bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
     pesquisa.click()
 
-    ##Site Gupy
+    ##Site Gupy                  
     pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > h3",By.CSS_SELECTOR)
     bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
     pesquisa.click()
@@ -143,10 +139,15 @@ def captura_vagas():
             break  # Sai do loop while se o elemento não for encontrado
     
     try: 
-        proxima_pagina = bot.find_element("#job-listing > div.sc-d868c80d-10.jwUJDp > nav > ul > li:nth-child(5) > button",By.CSS_SELECTOR)
+        proxima_pagina = bot.find_element("//button[@aria-label='Vá para próxima página']",By.XPATH)
         if proxima_pagina.is_enabled():
             proxima_pagina.click()
             captura_vagas()
+        # else:
+        #     proxima_pagina2 = bot.find_element("#job-listing > div.sc-d868c80d-10.jwUJDp > nav > ul > li:nth-child(4) > button",By.CSS_SELECTOR)
+        #     if proxima_pagina2.is_enabled():
+        #         proxima_pagina.click()
+        #         captura_vagas()
 
     except:
         print("capturamos tudo")
@@ -198,15 +199,16 @@ def tela_retorna_menu():
                 break
 
             elif event == 'Sim':
-                tela_inicial()
                 window.close()
+                
+                
 
             elif event == 'Não':
                 break
             
 
 tela_inicial()
-# tela_retorna_menu()
+tela_retorna_menu()
 
 
 
