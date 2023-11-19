@@ -53,6 +53,7 @@ def tela_inicial():
                 break
 
             elif event == 'Executar':
+                limpa_excel()
                 window.close()
                 nome_empresa = values['nome_empresa']
                 config_navegacao(nome_empresa)
@@ -70,13 +71,6 @@ def config_navegacao(nome_empresa):
     bot.browser = Browser.CHROME
     bot.driver_path = "chromedriver.exe"
     download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
-
-    def_options = default_options(
-
-        headless=bot.headless,
-        download_folder_path=bot.download_folder_path,
-        user_data_dir= None,  # Informing None here will generate a temporary directory
-        page_load_strategy=PageLoadStrategy.NORMAL)
     
     # Opens the browser on the BotCity website.
     
@@ -143,11 +137,6 @@ def captura_vagas():
         if proxima_pagina.is_enabled():
             proxima_pagina.click()
             captura_vagas()
-        # else:
-        #     proxima_pagina2 = bot.find_element("#job-listing > div.sc-d868c80d-10.jwUJDp > nav > ul > li:nth-child(4) > button",By.CSS_SELECTOR)
-        #     if proxima_pagina2.is_enabled():
-        #         proxima_pagina.click()
-        #         captura_vagas()
 
     except:
         print("capturamos tudo")
@@ -168,8 +157,15 @@ def joga_no_excel(nome_empresa):
                 'C':tipos_vagas[i]
             })
 
-
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
+
+def limpa_excel():
+ 
+    global nome_das_vagas, localidades_das_vagas, tipos_vagas
+    nome_das_vagas = []
+    localidades_das_vagas = []
+    tipos_vagas = []
+
 
 def tela_retorna_menu():
 
@@ -200,15 +196,17 @@ def tela_retorna_menu():
 
             elif event == 'Sim':
                 window.close()
-                
+                tela_inicial()
                 
 
             elif event == 'Não':
+                window.close()
                 break
             
 
 tela_inicial()
-tela_retorna_menu()
+
+
 
 
 
