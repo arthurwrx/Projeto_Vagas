@@ -9,7 +9,7 @@ from botcity.web import WebBot, Browser, PageLoadStrategy
 from botcity.web.browsers.chrome import default_options
 from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
-import openpyxl 
+import openpyxl
 
 nome_das_vagas = []
 localidades_das_vagas = []
@@ -127,9 +127,23 @@ def captura_vagas():
         captura_vagas()
 
     except:
-        print("deu ruim")
+        print("capturamos tudo")
+
+def joga_no_excel():
 
 
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    
+    for i in range(len(tipos_vagas)):
+            sheet.append({
+                'A':nome_das_vagas[i],
+                'B':localidades_das_vagas[i],
+                'C':tipos_vagas[i]
+            })
+
+
+    workbook.save(filename="Vagas.xlsx")
 
     
     
@@ -137,7 +151,7 @@ def captura_vagas():
 
 config_navegacao()
 captura_vagas()
-print(len(nome_das_vagas))
+joga_no_excel()
 
 
 
