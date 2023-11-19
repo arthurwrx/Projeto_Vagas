@@ -9,12 +9,16 @@ from botcity.web.browsers.chrome import default_options
 from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
 import openpyxl
+import datetime
 
 ### Variáveis Globais
 nome_das_vagas = []
 localidades_das_vagas = []
 tipos_vagas = []
 bot = WebBot()
+hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %H.%M.%S'))
+
+
 
 ##Controle da tela
 def tela_inicial():
@@ -50,11 +54,12 @@ def tela_inicial():
                 break
 
             elif event == 'Executar':
-                sg.WIN_CLOSED
+                window.close()
                 nome_empresa = values['nome_empresa']
                 config_navegacao(nome_empresa)
                 captura_vagas()
                 joga_no_excel(nome_empresa)
+                tela_inicial()
 
 
 
@@ -96,12 +101,20 @@ def config_navegacao(nome_empresa):
     bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
     pesquisa.click()
     
-    gupy = bot.find_element("#radix-3 > div.sc-fYaxgZ.kMYmhe > button",By.CSS_SELECTOR)
-    gupy.click()
+    try:
+        gupy = bot.find_element("#radix-3 > div.sc-fYaxgZ.kMYmhe > button",By.CSS_SELECTOR)
+        gupy.click()
+    
+    except:
+        pass
 
-    gupy = bot.find_element("//*[@id='onetrust-accept-btn-handler']",By.XPATH)
-    bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
-    gupy.click() 
+    try:
+        gupy = bot.find_element("//*[@id='onetrust-accept-btn-handler']",By.XPATH)
+        bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
+        gupy.click() 
+    except:
+        pass
+
 
 ## Função destinada a capturar os detalhes da vaga da empresa desejada
 def captura_vagas():
@@ -155,7 +168,7 @@ def joga_no_excel(nome_empresa):
             })
 
 
-    workbook.save(filename=f"{nome_empresa}.xlsx")
+    workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
 
 
 
