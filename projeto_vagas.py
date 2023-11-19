@@ -16,7 +16,7 @@ nome_das_vagas = []
 localidades_das_vagas = []
 tipos_vagas = []
 bot = WebBot()
-hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %H.%M.%S'))
+hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%m'))
 
 
 
@@ -59,9 +59,7 @@ def tela_inicial():
                 config_navegacao(nome_empresa)
                 captura_vagas()
                 joga_no_excel(nome_empresa)
-                tela_inicial()
-
-
+                tela_retorna_menu()
 
     return nome_empresa
 
@@ -82,6 +80,7 @@ def config_navegacao(nome_empresa):
         page_load_strategy=PageLoadStrategy.NORMAL)
     
     # Opens the browser on the BotCity website.
+    
     bot.browse("https://www.google.com/")
 
     # Import for the By enum.
@@ -112,9 +111,9 @@ def config_navegacao(nome_empresa):
         gupy = bot.find_element("//*[@id='onetrust-accept-btn-handler']",By.XPATH)
         bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
         gupy.click() 
+
     except:
         pass
-
 
 ## Função destinada a capturar os detalhes da vaga da empresa desejada
 def captura_vagas():
@@ -170,12 +169,43 @@ def joga_no_excel(nome_empresa):
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
 
+def tela_retorna_menu():
 
+    if __name__ == "__main__":
+        
+        sg.change_look_and_feel('Gray Gray Gray')
+
+        tamanho_botao = (15,2)
+        tamanho_caixa = (10,5)
+
+    
+        layout = [
+            
+            [sg.Column([[sg.Text('Deseja consultar mais alguma empresa?',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Text('')],
+            [
+            sg.Column([[sg.Button('Sim', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
+             sg.Column([[sg.Button('Não', size=tamanho_botao,font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')]]
+        
+
+        window = sg.Window('CNPJ',layout, size=(700, 225))
+        
+
+        while True: 
+            event, values = window.read()
+            if event == sg.WIN_CLOSED:
+                break
+
+            elif event == 'Sim':
+                tela_inicial()
+                window.close()
+
+            elif event == 'Não':
+                break
+            
 
 tela_inicial()
-# config_navegacao()
-# captura_vagas()
-# joga_no_excel()
+# tela_retorna_menu()
 
 
 
