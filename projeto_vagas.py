@@ -86,7 +86,7 @@ def config_navegacao(nome_empresa):
     pesquisa.click()
 
     ##Site Gupy                  
-    pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > h3",By.CSS_SELECTOR)
+    pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > div > div > div > cite",By.CSS_SELECTOR)
     bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
     pesquisa.click()
     
