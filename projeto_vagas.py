@@ -144,8 +144,9 @@ def captura_vagas():
     
     try: 
         proxima_pagina = bot.find_element("#job-listing > div.sc-d868c80d-10.jwUJDp > nav > ul > li:nth-child(5) > button",By.CSS_SELECTOR)
-        proxima_pagina.click()
-        captura_vagas()
+        if proxima_pagina.is_enabled():
+            proxima_pagina.click()
+            captura_vagas()
 
     except:
         print("capturamos tudo")
