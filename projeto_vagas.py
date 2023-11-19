@@ -1,9 +1,8 @@
 """ 1 Perguntar o nome da empresa que deseja que busque
     2 Iniciar o navegador e acessar o site da Gupy
     3 Iterar sobre as vagas e a cada vaga salvar as informações nas colunas do Excel
-
 """
-
+##Dependências
 import PySimpleGUI as sg 
 from botcity.web import WebBot, Browser, PageLoadStrategy
 from botcity.web.browsers.chrome import default_options
@@ -11,15 +10,17 @@ from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
 import openpyxl
 
+### Variáveis Globais
 nome_das_vagas = []
 localidades_das_vagas = []
 tipos_vagas = []
 bot = WebBot()
 
-
+##Controle da tela
 def tela_inicial():
 
     if __name__ == "__main__":
+        
         sg.change_look_and_feel('Gray Gray Gray')
 
         tamanho_botao = (15,2)
@@ -28,11 +29,10 @@ def tela_inicial():
     
         layout = [
             
-            [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de buscar de vagas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
-            [sg.Column([[sg.Text('Não esqueça de inserir os dados atualizados na planilha! ')]], justification='center')],
-            [sg.Column([[sg.Text('Antes de começar, algumas orientações:',font=('Helvetica', 10, 'bold'))]], justification='center')],
-            [sg.Text('')],
-            [sg.Column([[sg.Text('Se você já conferiu todas as informações clique em EXECUTAR para prosseguir')]], justification='center')],
+            [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
+            [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
+            [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em EXECUTAR para prosseguir')]], justification='center')],
             [sg.Text('')],
 
             [
@@ -41,17 +41,27 @@ def tela_inicial():
             ]]
         
 
-        window = sg.Window('CNPJ',layout, size=(850, 450))
+        window = sg.Window('CNPJ',layout, size=(700, 225))
+        
 
         while True: 
             event, values = window.read()
             if event == sg.WIN_CLOSED:
                 break
 
-            # elif event == 'Executar':
+            elif event == 'Executar':
+                sg.WIN_CLOSED
+                nome_empresa = values['nome_empresa']
+                config_navegacao(nome_empresa)
+                captura_vagas()
+                joga_no_excel(nome_empresa)
 
 
-def config_navegacao():
+
+    return nome_empresa
+
+## Função destinada a iniciar o navegador e entrar no site da gupy
+def config_navegacao(nome_empresa):
 
     # Configure whether or not to run on headless mode.
     bot.headless = False
@@ -74,7 +84,7 @@ def config_navegacao():
     
     ## Abre o google
     pesquisa = bot.find_element("//textarea[@id='APjFqb']",By.XPATH)
-    pesquisa.send_keys("PagSeguro gupy")
+    pesquisa.send_keys(f'{nome_empresa} gupy')
 
     ## Pesquisa a empresa
     pesquisa = bot.find_element("//input[@name='btnK']",By.XPATH)
@@ -93,8 +103,7 @@ def config_navegacao():
     bot.wait_for_element_visibility(element=gupy, visible=True, waiting_time=10000)
     gupy.click() 
 
-
-
+## Função destinada a capturar os detalhes da vaga da empresa desejada
 def captura_vagas():
    
     i = 1
@@ -129,11 +138,14 @@ def captura_vagas():
     except:
         print("capturamos tudo")
 
-def joga_no_excel():
+## Função destinada a dispor as informações no excel
+def joga_no_excel(nome_empresa):
 
 
     workbook = openpyxl.Workbook()
-    sheet = workbook.active
+    sheet = workbook.active    
+
+    sheet.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
     
     for i in range(len(tipos_vagas)):
             sheet.append({
@@ -143,15 +155,14 @@ def joga_no_excel():
             })
 
 
-    workbook.save(filename="Vagas.xlsx")
-
-    
-    
+    workbook.save(filename=f"{nome_empresa}.xlsx")
 
 
-config_navegacao()
-captura_vagas()
-joga_no_excel()
+
+tela_inicial()
+# config_navegacao()
+# captura_vagas()
+# joga_no_excel()
 
 
 
