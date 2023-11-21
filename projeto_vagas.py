@@ -4,8 +4,7 @@
 """
 ##Dependências
 import PySimpleGUI as sg 
-from botcity.web import WebBot, Browser, PageLoadStrategy
-from botcity.web.browsers.chrome import default_options
+from botcity.web import WebBot, Browser
 from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
 import openpyxl
@@ -31,7 +30,7 @@ def tela_inicial():
 
     
         layout = [
-            
+            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
@@ -44,7 +43,7 @@ def tela_inicial():
             ]]
         
 
-        window = sg.Window('CNPJ',layout, size=(700, 225))
+        window = sg.Window('CNPJ',layout, size=(700, 350))
         
 
         while True: 
@@ -159,6 +158,7 @@ def joga_no_excel(nome_empresa):
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
 
+## Função a limpar as listas do excel
 def limpa_excel():
  
     global nome_das_vagas, localidades_das_vagas, tipos_vagas
@@ -166,7 +166,7 @@ def limpa_excel():
     localidades_das_vagas = []
     tipos_vagas = []
 
-
+## pergunta se o usuário quer fazer mais uma pesquisa
 def tela_retorna_menu():
 
     if __name__ == "__main__":
@@ -203,7 +203,39 @@ def tela_retorna_menu():
                 window.close()
                 break
             
+def linkedin():
 
+        login = "researcher.experts@grupociadetalentos.com.br"
+        senha = "Experts22"
+
+        bot.browse('https://www.linkedin.com/login') 
+
+        bot.wait(2) # adicionando delay |time.sleep(*tempo*)|
+
+        login_link = bot.find_element('//*[@id="username"]',By.XPATH)
+        login_link.send_keys(login)
+        bot.wait(2)
+        
+        login_link = bot.find_element('//*[@id="password"]',By.XPATH)
+        login_link.send_keys(senha)
+
+        bot.wait(1) # delay
+
+        login_link = bot.find_element("//*[@type='submit']",By.XPATH)
+        login_link.click()
+
+        pesquisa_linkedin = bot.find_element("#search-reusables__filters-bar > ul > li:nth-child(3) > button",By.CSS_SELECTOR)
+        pesquisa_linkedin.send_keys("Localiza")
+        
+        
+        bot.wait(100000)
+
+
+        
+
+
+
+# linkedin()
 tela_inicial()
 
 
