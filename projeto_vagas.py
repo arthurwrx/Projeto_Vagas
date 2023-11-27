@@ -226,15 +226,19 @@ def linkedin():
 
         
 
-        bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3768269117&geoId=106057199&keywords=localiza&location=&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
+        bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3751783041&geoId=106057199&keywords=sulamerica&location=Brasil&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
 
         bot.wait(4000)
         
         pesquisa_linkedin = bot.find_elements("//div[contains(@class, 'full-width artdeco-entity-lockup__title ember-view')]",By.XPATH)
         
         
-        for i in range(0,10):
-            print(pesquisa_linkedin)
+        for i in range(len(pesquisa_linkedin)):
+
+            vaga_atual = pesquisa_linkedin[i]
+            print(vaga_atual.text)
+
+             
 
 
 
