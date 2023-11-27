@@ -203,32 +203,37 @@ def tela_retorna_menu():
                 window.close()
                 break
             
-def linkedin():
+def busca_linkedin():
 
         login = "researcher.experts@grupociadetalentos.com.br"
         senha = "Experts22"
 
         bot.browse('https://www.linkedin.com/login') 
 
-        bot.wait(2) # adicionando delay |time.sleep(*tempo*)|
+        bot.wait(1000)
 
-        login_link = bot.find_element('//*[@id="username"]',By.XPATH)
-        login_link.send_keys(login)
-        bot.wait(2)
+        login_linkedin = bot.find_element('//*[@id="username"]',By.XPATH)
+        login_linkedin.send_keys(login)
+        bot.wait(1000)
         
-        login_link = bot.find_element('//*[@id="password"]',By.XPATH)
-        login_link.send_keys(senha)
+        login_linkedin = bot.find_element('//*[@id="password"]',By.XPATH)
+        login_linkedin.send_keys(senha)
 
-        bot.wait(1) # delay
+        bot.wait(1000) # delay
 
-        login_link = bot.find_element("//*[@type='submit']",By.XPATH)
-        login_link.click()
+        login_linkedin = bot.find_element("//*[@type='submit']",By.XPATH)
+        login_linkedin.click()
+
+
+        linkedin = bot.find_element("#global-nav-typeahead > input",By.CSS_SELECTOR)
+        bot.wait_for_element_visibility(element=linkedin, visible=True, waiting_time=9999999)
+        login.send_keys("Cia de talentos") 
 
         
 
-        bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3751783041&geoId=106057199&keywords=sulamerica&location=Brasil&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
+        # bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3751783041&geoId=106057199&keywords=sulamerica&location=Brasil&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
 
-        bot.wait(4000)
+        
         
         pesquisa_linkedin = bot.find_elements("//div[contains(@class, 'full-width artdeco-entity-lockup__title ember-view')]",By.XPATH)
         
@@ -251,7 +256,7 @@ def linkedin():
 
 
 
-linkedin()
+busca_linkedin()
 # tela_inicial()
 
 
