@@ -224,8 +224,20 @@ def linkedin():
         login_link = bot.find_element("//*[@type='submit']",By.XPATH)
         login_link.click()
 
-        pesquisa_linkedin = bot.find_element("#search-reusables__filters-bar > ul > li:nth-child(3) > button",By.CSS_SELECTOR)
-        pesquisa_linkedin.send_keys("Localiza")
+        
+
+        bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3768269117&geoId=106057199&keywords=localiza&location=&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
+
+        bot.wait(4000)
+        
+        pesquisa_linkedin = bot.find_elements("//div[contains(@class, 'full-width artdeco-entity-lockup__title ember-view')]",By.XPATH)
+        
+        
+        for i in range(0,10):
+            print(pesquisa_linkedin)
+
+
+
         
         
         bot.wait(100000)
@@ -235,8 +247,8 @@ def linkedin():
 
 
 
-# linkedin()
-tela_inicial()
+linkedin()
+# tela_inicial()
 
 
 
