@@ -211,7 +211,7 @@ def busca_linkedin():
 
         pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
         pesquisa_linkedin.clear()      
-        pesquisa_linkedin.send_keys('Localiza&Co')
+        pesquisa_linkedin.send_keys('SulAmérica')
 
         bot.wait(3000)
 
@@ -240,10 +240,11 @@ def busca_linkedin():
                 bot.wait(3000)
                 print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
                 seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
+                bot.wait(3000)
                 seleciona_caixinha.click()
 
         
-        
+        bot.wait(3000)
         clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
         clica_concluir.click()
 
