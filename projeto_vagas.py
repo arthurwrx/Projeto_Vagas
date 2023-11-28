@@ -10,13 +10,26 @@ from selenium.common.exceptions import NoSuchElementException
 import openpyxl
 import datetime
 
-### Variáveis Globais
+### Variáveis de Vagas de Sites:
+#Gupy
 nome_das_vagas = []
 localidades_das_vagas = []
 tipos_vagas = []
+
+#Linkedin
+nome_das_vagas_linkedin = []
+localidades_das_vagas_linkedin = []
+tipos_vagas_linkedin = []
+
+num_vagas = 0
+nome_das_vagas_linkedin_selector = []
+
+
+
+#Outras Variáveis
+
 bot = WebBot()
 hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%Mm'))
-
 
 ##Controle da tela
 def tela_inicial():
@@ -57,6 +70,7 @@ def tela_inicial():
                 nome_empresa = values['nome_empresa']
                 config_navegacao(nome_empresa)
                 captura_vagas()
+                busca_linkedin(nome_empresa)
                 joga_no_excel(nome_empresa)
                 tela_retorna_menu()
 
@@ -78,11 +92,12 @@ def config_navegacao(nome_empresa):
     ## Abre o google
     pesquisa = bot.find_element("//textarea[@id='APjFqb']",By.XPATH)
     pesquisa.send_keys(f'{nome_empresa} gupy')
+    bot.wait(3000)
 
     ## Pesquisa a empresa
-    pesquisa = bot.find_element("//input[@name='btnK']",By.XPATH)
-    bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
-    pesquisa.click()
+    pesquisa_google_button = bot.find_element("//*[@value='Pesquisa Google']", By.XPATH)
+    pesquisa_google_button.click()
+
 
     ##Site Gupy                  
     pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > div > div > div > cite",By.CSS_SELECTOR)
@@ -90,7 +105,7 @@ def config_navegacao(nome_empresa):
     pesquisa.click()
     
     try:
-        gupy = bot.find_element("#radix-3 > div.sc-fYaxgZ.kMYmhe > button",By.CSS_SELECTOR)
+        gupy = bot.find_element("//button[contains(text(), 'Ok, entendi')]",By.XPATH)
         gupy.click()
     
     except:
@@ -110,20 +125,21 @@ def captura_vagas():
     i = 1
     while i < 11:
         
-        nome_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-5"
-        local_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-6"
-        tipo_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-7"
+        nome_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
+        local_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
+        tipo_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
+        
 
         try:
-            nome_vaga = bot.find_element(nome_vaga_selector,By.CSS_SELECTOR)
+            nome_vaga = bot.find_element(nome_vaga_selector,By.XPATH)
             nome_da_vaga_string = nome_vaga.text
             nome_das_vagas.append(nome_da_vaga_string)
             
-            local_vaga = bot.find_element(local_vaga_selector,By.CSS_SELECTOR)
+            local_vaga = bot.find_element(local_vaga_selector,By.XPATH)
             local_da_vaga_string = local_vaga.text
             localidades_das_vagas.append(local_da_vaga_string)
 
-            tipo_vaga = bot.find_element(tipo_vaga_selector,By.CSS_SELECTOR)
+            tipo_vaga = bot.find_element(tipo_vaga_selector,By.XPATH)
             tipo_da_vaga = tipo_vaga.text
             tipos_vagas.append(tipo_da_vaga)
             i += 1
@@ -143,18 +159,32 @@ def captura_vagas():
 ## Função destinada a dispor as informações no excel
 def joga_no_excel(nome_empresa):
 
-
     workbook = openpyxl.Workbook()
-    sheet = workbook.active    
-
-    sheet.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
     
-    for i in range(len(tipos_vagas)):
-            sheet.append({
-                'A':nome_das_vagas[i],
-                'B':localidades_das_vagas[i],
-                'C':tipos_vagas[i]
-            })
+    if nome_das_vagas != "":
+
+        sheet_gupy = workbook.create_sheet(title="Gupy")
+        sheet_gupy.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
+        
+        for i in range(len(tipos_vagas)):
+                sheet_gupy.append({
+                    'A':nome_das_vagas[i],
+                    'B':localidades_das_vagas[i],
+                    'C':tipos_vagas[i]
+                })
+    
+    if nome_das_vagas_linkedin != "":
+
+        sheet_linkedin = workbook.create_sheet(title="Linkedin")
+        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
+
+        for i in range(len(nome_das_vagas_linkedin_selector)):
+            sheet_linkedin.append({
+            'A':nome_das_vagas[i],
+            'B':localidades_das_vagas[i],
+            'C':tipos_vagas[i]
+        })
+    
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
 
@@ -203,40 +233,97 @@ def tela_retorna_menu():
                 window.close()
                 break
             
-def linkedin():
-
-        login = "researcher.experts@grupociadetalentos.com.br"
-        senha = "Experts22"
-
-        bot.browse('https://www.linkedin.com/login') 
-
-        bot.wait(2) # adicionando delay |time.sleep(*tempo*)|
-
-        login_link = bot.find_element('//*[@id="username"]',By.XPATH)
-        login_link.send_keys(login)
-        bot.wait(2)
+def busca_linkedin(nome_empresa):
         
-        login_link = bot.find_element('//*[@id="password"]',By.XPATH)
-        login_link.send_keys(senha)
+        bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
+        bot.wait(3000)
+        pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
+        pesquisa_linkedin.clear()      
+        pesquisa_linkedin.send_keys(nome_empresa)
 
-        bot.wait(1) # delay
+        pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
+        bot.wait(3000)
+        empresa_buscada = pesquisa_linkedin.text
+        pesquisa_linkedin.click()
 
-        login_link = bot.find_element("//*[@type='submit']",By.XPATH)
-        login_link.click()
+        print(empresa_buscada)
 
-        pesquisa_linkedin = bot.find_element("#search-reusables__filters-bar > ul > li:nth-child(3) > button",By.CSS_SELECTOR)
-        pesquisa_linkedin.send_keys("Localiza")
+        filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
+        filtro_linkedin.click()
+
+        lista_filtros_linkedin = bot.find_elements("//div[@aria-label='Opções de filtro de Empresa.']/div[@class='filter-values-container__filter-value']",By.XPATH)
         
+        ## Nesta etapa está ocorrendo a parte de filtragem da empresa
+
+        for i in range(0,len(lista_filtros_linkedin)):
+
+            empresa_filtrada = lista_filtros_linkedin[i]
+            lista_checkbox_linkedin = f"//*[@id='f_C-{str(i)}']"
+            empresa_filtrada = empresa_filtrada.text
+            empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
+            
+
+            if empresa_tratada == empresa_buscada:
+                bot.wait(4000)
+                print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
+                seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
+                bot.wait(4000)
+                seleciona_caixinha.click()
+
         
-        bot.wait(100000)
+        bot.wait(3000)
+        clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
+        clica_concluir.click()
+        bot.wait(5000)
+        ### Começa aqui a etapa de capturar as vagas
 
+        ## O número de scrolladas deve ser igual a o número de vagas dividido por 25 (Que é o número máximo de páginas abertas)
 
+        num_vagas = f'//span[@class="results-context-header__job-count"]'
+        num_vagas_site = bot.find_element(num_vagas,By.XPATH)
+        num_vagas = num_vagas_site.text
+        num_vagas = int(num_vagas)
         
+        num_scrolls = num_vagas / 25
+        num_scrolls = int(num_scrolls)
+
+        for i in range((num_scrolls) + 1):
+
+            try:
+                bot.execute_javascript("window.scrollBy(0, document.body.scrollHeight);")
+                bot.wait(1700)
+                botao = bot.find_element("//button[@aria-label='Ver mais vagas']",By.XPATH)
+                bot.wait(1700)
+                botao.click()
+                desce_pag += 1
+            except:
+                continue
+
+        ## Nesta etapa, ocorre a captura das vagas e jogar na lista
+
+        nome_das_vagas_linkedin_selector = bot.find_elements("//h3[@class='base-search-card__title']",By.XPATH)
+        localizacao_atuacao_linkedin_selector = bot.find_elements("//span[@class='job-search-card__location']",By.XPATH)
+
+
+        for i in range(len(nome_das_vagas_linkedin_selector)):
+
+            ##Captura título da vaga
+            nome_da_vaga_linkedin = nome_das_vagas_linkedin_selector[i]
+            nome_da_vaga_linkedin = nome_da_vaga_linkedin.text
+            nome_das_vagas_linkedin.append(nome_da_vaga_linkedin)
+
+            ##Captura localidade
+            localizacao_atuacao_linkedin = localizacao_atuacao_linkedin_selector[i]
+            localizacao_atuacao_linkedin = localizacao_atuacao_linkedin.text
+            localidades_das_vagas_linkedin.append(localidades_das_vagas)
 
 
 
-# linkedin()
+
 tela_inicial()
+
+
+
 
 
 
