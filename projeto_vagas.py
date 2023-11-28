@@ -227,7 +227,6 @@ def busca_linkedin():
         lista_filtros_linkedin = bot.find_elements("//div[@aria-label='Opções de filtro de Empresa.']/div[@class='filter-values-container__filter-value']",By.XPATH)
         
 
-
         for i in range(len(lista_filtros_linkedin)):
 
 
@@ -238,11 +237,14 @@ def busca_linkedin():
             print(empresa_tratada)
 
             if empresa_tratada == empresa_buscada:
+                bot.wait(3000)
                 print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
                 seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
                 seleciona_caixinha.click()
-                bot.wait(2000)
-        clica_concluir = bot.find_element("//button[contains(text(), 'Concluído') and @class='filter__submit-button']",By.XPATH)
+
+        
+        
+        clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
         clica_concluir.click()
 
         
