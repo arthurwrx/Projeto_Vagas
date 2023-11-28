@@ -318,22 +318,4 @@ def busca_linkedin(nome_empresa):
             localidades_das_vagas_linkedin.append(localidades_das_vagas)
 
 
-
-
 tela_inicial()
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
