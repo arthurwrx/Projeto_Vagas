@@ -113,6 +113,7 @@ def captura_vagas():
         nome_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-5"
         local_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-6"
         tipo_vaga_selector = f"#job-listing > ul > li:nth-child({str(i)}) > a > div > div.sc-d868c80d-7"
+        
 
         try:
             nome_vaga = bot.find_element(nome_vaga_selector,By.CSS_SELECTOR)
@@ -205,49 +206,45 @@ def tela_retorna_menu():
             
 def busca_linkedin():
 
-        login = "researcher.experts@grupociadetalentos.com.br"
-        senha = "Experts22"
 
-        bot.browse('https://www.linkedin.com/login') 
+        bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
 
-        bot.wait(1000)
+        pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
+        pesquisa_linkedin.clear()      
+        pesquisa_linkedin.send_keys('Localiza&Co')
 
-        login_linkedin = bot.find_element('//*[@id="username"]',By.XPATH)
-        login_linkedin.send_keys(login)
-        bot.wait(1000)
-        
-        login_linkedin = bot.find_element('//*[@id="password"]',By.XPATH)
-        login_linkedin.send_keys(senha)
+        bot.wait(3000)
 
-        bot.wait(1000) # delay
+        pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
+        empresa_buscada = pesquisa_linkedin.text
+        pesquisa_linkedin.click()
 
-        login_linkedin = bot.find_element("//*[@type='submit']",By.XPATH)
-        login_linkedin.click()
+        print(empresa_buscada)
 
+        filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
+        filtro_linkedin.click()
 
-        linkedin = bot.find_element("#global-nav-typeahead > input",By.CSS_SELECTOR)
-        bot.wait_for_element_visibility(element=linkedin, visible=True, waiting_time=9999999)
-        login.send_keys("Cia de talentos") 
-
+        lista_filtros_linkedin = bot.find_elements("//div[@aria-label='Opções de filtro de Empresa.']/div[@class='filter-values-container__filter-value']",By.XPATH)
         
 
-        # bot.browse('https://www.linkedin.com/jobs/search/?currentJobId=3751783041&geoId=106057199&keywords=sulamerica&location=Brasil&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true') 
 
-        
-        
-        pesquisa_linkedin = bot.find_elements("//div[contains(@class, 'full-width artdeco-entity-lockup__title ember-view')]",By.XPATH)
-        
-        
-        for i in range(len(pesquisa_linkedin)):
-
-            vaga_atual = pesquisa_linkedin[i]
-            print(vaga_atual.text)
-
-             
+        for i in range(len(lista_filtros_linkedin)):
 
 
+            empresa_filtrada = lista_filtros_linkedin[i]
+            lista_checkbox_linkedin = f"//*[@id='f_C-{str(i)}']"
+            empresa_filtrada = empresa_filtrada.text
+            empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
+            print(empresa_tratada)
 
-        
+            if empresa_tratada == empresa_buscada:
+                print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
+                seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
+                seleciona_caixinha.click()
+                bot.wait(2000)
+        clica_concluir = bot.find_element("//button[contains(text(), 'Concluído') and @class='filter__submit-button']",By.XPATH)
+        clica_concluir.click()
+
         
         bot.wait(100000)
 
