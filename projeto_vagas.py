@@ -102,8 +102,10 @@ def config_navegacao(nome_empresa):
         pesquisa_google_button.click()
     
     except:
-        pesquisa_google_button = bot.find_element("html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[1]", By.XPATH)
+        pesquisa_google_button = bot.find_element("//div[@aria-label='Ferramentas de inserção de texto']",By.XPATH)
+        pesquisa_google_button.click()
         bot.wait(2000)
+        pesquisa_google_button = bot.find_element("html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[1]", By.XPATH)
         pesquisa_google_button.click()
 
     ##Site Gupy                  
@@ -257,12 +259,30 @@ def busca_linkedin(nome_empresa):
             pesquisa_linkedin.send_keys(char)
             time.sleep(0.3)
 
-        pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
-        bot.wait(3000)
-        empresa_buscada = pesquisa_linkedin.text
-        pesquisa_linkedin.click()
 
-        print(empresa_buscada)
+        pesquisa_linkedin = bot.find_elements("//*[@id='job-search-bar-keywords-typeahead-list']/li",By.XPATH)
+
+        for i in range(1,len(pesquisa_linkedin)):
+
+            empresa_pesquisada = pesquisa_linkedin[i]
+            empresa_pesquisada = empresa_pesquisada.text
+            print(empresa_pesquisada)
+            print(empresa_pesquisada == nome_empresa)
+            
+            if empresa_pesquisada == nome_empresa:
+                bot.wait(4000)
+                print(f"Condição satisfeita em: {empresa_pesquisada} {nome_empresa}")
+                seleciona_empresa = bot.find_element(f"//*[@id='keywords-{str(i+1)}']",By.XPATH)
+                bot.wait(4000)
+                seleciona_empresa.click()
+                break
+            
+        
+        # bot.wait(3000)
+        # empresa_buscada = pesquisa_linkedin.text
+        # pesquisa_linkedin.click()
+
+        print(seleciona_empresa)
 
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
         filtro_linkedin.click()
@@ -278,9 +298,9 @@ def busca_linkedin(nome_empresa):
             empresa_filtrada = empresa_filtrada.text
             empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
             
-            if empresa_tratada == empresa_buscada:
+            if empresa_tratada == empresa_pesquisada:
                 bot.wait(4000)
-                print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
+                print(f"Condição satisfeita em: {empresa_tratada} {empresa_pesquisada}")
                 seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
                 bot.wait(4000)
                 seleciona_caixinha.click()
