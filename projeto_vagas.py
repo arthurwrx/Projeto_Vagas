@@ -87,7 +87,7 @@ def config_navegacao(nome_empresa):
     download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
     
     # Opens the browser on the BotCity website.
-    bot.start_browser()
+    
     bot.browse("https://www.google.com/")
                                       
     ## Abre o google
@@ -194,7 +194,7 @@ def joga_no_excel(nome_empresa):
     
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
-    bot.close_page()
+    
 
 ## Função a limpar as listas do excel
 def limpa_excel():
