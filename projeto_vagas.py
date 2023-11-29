@@ -9,6 +9,7 @@ from botcity.web import By
 from selenium.common.exceptions import NoSuchElementException
 import openpyxl
 import datetime
+import time
 
 ### Variáveis de Vagas de Sites:
 #Gupy
@@ -17,9 +18,9 @@ localidades_das_vagas = []
 tipos_vagas = []
 
 #Linkedin
-nome_das_vagas_linkedin = []
-localidades_das_vagas_linkedin = []
-tipos_vagas_linkedin = []
+# nome_das_vagas_linkedin = []
+# localidades_das_vagas_linkedin = []
+# tipos_vagas_linkedin = []
 
 num_vagas = 0
 nome_das_vagas_linkedin_selector = []
@@ -96,12 +97,12 @@ def config_navegacao(nome_empresa):
 
     ## Pesquisa a empresa
     pesquisa_google_button = bot.find_element("//*[@value='Pesquisa Google']", By.XPATH)
+    bot.wait(2000)
     pesquisa_google_button.click()
 
 
     ##Site Gupy                  
-    pesquisa = bot.find_element("#rso > div.hlcw0c > div > div > div > div > div > div > div > div.yuRUbf > div > span > a > div > div > div > cite",By.CSS_SELECTOR)
-    bot.wait_for_element_visibility(element=pesquisa, visible=True, waiting_time=10000)
+    pesquisa = bot.find_element("//h3[@class='LC20lb MBeuO DKV0Md']",By.XPATH)
     pesquisa.click()
     
     try:
@@ -176,25 +177,29 @@ def joga_no_excel(nome_empresa):
     if nome_das_vagas_linkedin != "":
 
         sheet_linkedin = workbook.create_sheet(title="Linkedin")
-        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
+        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
 
         for i in range(len(nome_das_vagas_linkedin_selector)):
             sheet_linkedin.append({
-            'A':nome_das_vagas[i],
-            'B':localidades_das_vagas[i],
-            'C':tipos_vagas[i]
+            'A':nome_das_vagas_linkedin[i],
+            'B':localidades_das_vagas_linkedin[i],
         })
     
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
+    bot.close_page()
 
 ## Função a limpar as listas do excel
 def limpa_excel():
  
-    global nome_das_vagas, localidades_das_vagas, tipos_vagas
+    global nome_das_vagas, localidades_das_vagas, tipos_vagas, nome_das_vagas_linkedin,localidades_das_vagas_linkedin,tipos_vagas_linkedin
     nome_das_vagas = []
     localidades_das_vagas = []
     tipos_vagas = []
+
+    nome_das_vagas_linkedin = []
+    localidades_das_vagas_linkedin = []
+    tipos_vagas_linkedin = []
 
 ## pergunta se o usuário quer fazer mais uma pesquisa
 def tela_retorna_menu():
@@ -238,8 +243,12 @@ def busca_linkedin(nome_empresa):
         bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
         bot.wait(3000)
         pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
-        pesquisa_linkedin.clear()      
-        pesquisa_linkedin.send_keys(nome_empresa)
+
+        pesquisa_linkedin.clear()
+
+        for char in nome_empresa:
+            pesquisa_linkedin.send_keys(char)
+            time.sleep(0.3)
 
         pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
         bot.wait(3000)
@@ -262,7 +271,6 @@ def busca_linkedin(nome_empresa):
             empresa_filtrada = empresa_filtrada.text
             empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
             
-
             if empresa_tratada == empresa_buscada:
                 bot.wait(4000)
                 print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
@@ -311,11 +319,31 @@ def busca_linkedin(nome_empresa):
             nome_da_vaga_linkedin = nome_das_vagas_linkedin_selector[i]
             nome_da_vaga_linkedin = nome_da_vaga_linkedin.text
             nome_das_vagas_linkedin.append(nome_da_vaga_linkedin)
+            print(nome_das_vagas_linkedin)
 
             ##Captura localidade
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin_selector[i]
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin.text
             localidades_das_vagas_linkedin.append(localidades_das_vagas)
+           
+
+
 
 
 tela_inicial()
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
