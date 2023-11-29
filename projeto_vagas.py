@@ -47,9 +47,9 @@ def tela_inicial():
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
-            [sg.Checkbox('Gupy', key='gupy')],
-            [sg.Checkbox('Linkedin', key='linkedin')],
-            [sg.Checkbox('Todas', key='todas')],
+            [sg.Radio('Gupy', key='gupy', default=True,group_id='plataforma')],
+            [sg.Radio('Linkedin', key='linkedin',group_id='plataforma')],
+            [sg.Radio('Todas', key='todas',group_id='plataforma')],
             [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em EXECUTAR para prosseguir')]], justification='center')],
             [sg.Text('')],
             [
@@ -280,13 +280,14 @@ def busca_linkedin(nome_empresa):
         for char in nome_empresa:
             pesquisa_linkedin.send_keys(char)
             time.sleep(0.3)
+        try:
+            pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
+            bot.wait(4000)
+            empresa_buscada = pesquisa_linkedin.text
+            pesquisa_linkedin.click()
 
-        pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
-        bot.wait(3000)
-        empresa_buscada = pesquisa_linkedin.text
-        pesquisa_linkedin.click()
-
-        print(empresa_buscada) 
+        except:
+            pass
 
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
         filtro_linkedin.click()
@@ -301,13 +302,21 @@ def busca_linkedin(nome_empresa):
             lista_checkbox_linkedin = f"//*[@id='f_C-{str(i)}']"
             empresa_filtrada = empresa_filtrada.text
             empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
-            
-            if empresa_tratada == empresa_buscada:
-                bot.wait(4000)
-                print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
-                seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
-                bot.wait(4000)
-                seleciona_caixinha.click()
+
+            try:
+                if empresa_tratada == empresa_buscada:
+                    bot.wait(4000)
+                    print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
+                    seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
+                    bot.wait(4000)
+                    seleciona_caixinha.click()
+            except:
+                    if empresa_tratada == pesquisa_linkedin.text:
+                        bot.wait(4000)
+                        print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
+                        seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
+                        bot.wait(4000)
+                        seleciona_caixinha.click()
 
         bot.wait(3000)
         clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
