@@ -18,9 +18,9 @@ localidades_das_vagas = []
 tipos_vagas = []
 
 #Linkedin
-# nome_das_vagas_linkedin = []
-# localidades_das_vagas_linkedin = []
-# tipos_vagas_linkedin = []
+
+localidades_das_vagas_linkedin = []
+tipos_vagas_linkedin = []
 
 num_vagas = 0
 nome_das_vagas_linkedin_selector = []
@@ -87,7 +87,7 @@ def config_navegacao(nome_empresa):
     download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
     
     # Opens the browser on the BotCity website.
-    
+    bot.start_browser()
     bot.browse("https://www.google.com/")
                                       
     ## Abre o google
@@ -96,10 +96,15 @@ def config_navegacao(nome_empresa):
     bot.wait(3000)
 
     ## Pesquisa a empresa
-    pesquisa_google_button = bot.find_element("//*[@value='Pesquisa Google']", By.XPATH)
-    bot.wait(2000)
-    pesquisa_google_button.click()
-
+    try:
+        pesquisa_google_button = bot.find_element("//*[@value='Pesquisa Google']", By.XPATH)
+        bot.wait(2000)
+        pesquisa_google_button.click()
+    
+    except:
+        pesquisa_google_button = bot.find_element("html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[1]", By.XPATH)
+        bot.wait(2000)
+        pesquisa_google_button.click()
 
     ##Site Gupy                  
     pesquisa = bot.find_element("//h3[@class='LC20lb MBeuO DKV0Md']",By.XPATH)
@@ -127,8 +132,8 @@ def captura_vagas():
     while i < 11:
         
         nome_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
-        local_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
-        tipo_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[1]"
+        local_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[{2}]"
+        tipo_vaga_selector = f"//*[@id='job-listing']/ul/li[{str(i)}]/a/div/div[{3}]"
         
 
         try:
@@ -178,8 +183,10 @@ def joga_no_excel(nome_empresa):
 
         sheet_linkedin = workbook.create_sheet(title="Linkedin")
         sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
+        print()
 
-        for i in range(len(nome_das_vagas_linkedin_selector)):
+        for i in range(len(nome_das_vagas_linkedin)):
+            print(nome_das_vagas_linkedin[i])
             sheet_linkedin.append({
             'A':nome_das_vagas_linkedin[i],
             'B':localidades_das_vagas_linkedin[i],
@@ -319,16 +326,13 @@ def busca_linkedin(nome_empresa):
             nome_da_vaga_linkedin = nome_das_vagas_linkedin_selector[i]
             nome_da_vaga_linkedin = nome_da_vaga_linkedin.text
             nome_das_vagas_linkedin.append(nome_da_vaga_linkedin)
-            print(nome_das_vagas_linkedin)
+          
 
             ##Captura localidade
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin_selector[i]
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin.text
-            localidades_das_vagas_linkedin.append(localidades_das_vagas)
+            localidades_das_vagas_linkedin.append(localizacao_atuacao_linkedin)
            
-
-
-
 
 tela_inicial()
 
