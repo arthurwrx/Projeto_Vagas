@@ -18,9 +18,8 @@ localidades_das_vagas = []
 tipos_vagas = []
 
 #Linkedin
-
+nome_das_vagas_linkedin = []
 localidades_das_vagas_linkedin = []
-tipos_vagas_linkedin = []
 
 num_vagas = 0
 nome_das_vagas_linkedin_selector = []
@@ -48,16 +47,18 @@ def tela_inicial():
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
+            [sg.Checkbox('Gupy', key='gupy')],
+            [sg.Checkbox('Linkedin', key='linkedin')],
+            [sg.Checkbox('Todas', key='todas')],
             [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em EXECUTAR para prosseguir')]], justification='center')],
             [sg.Text('')],
-
             [
             sg.Column([[sg.Button('Executar', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
             #  sg.Column([[sg.Button('Reiniciar', size=tamanho_botao,font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')]]
             ]]
         
 
-        window = sg.Window('CNPJ',layout, size=(700, 350))
+        window = sg.Window('CNPJ',layout, size=(700, 450))
         
 
         while True: 
@@ -66,14 +67,37 @@ def tela_inicial():
                 break
 
             elif event == 'Executar':
-                limpa_excel()
-                window.close()
-                nome_empresa = values['nome_empresa']
-                config_navegacao(nome_empresa)
-                captura_vagas()
-                busca_linkedin(nome_empresa)
-                joga_no_excel(nome_empresa)
-                tela_retorna_menu()
+
+                if values['gupy']:
+                    limpa_excel()
+                    window.close()
+                    nome_empresa = values['nome_empresa']
+                    config_navegacao(nome_empresa)
+                    captura_vagas()
+                    joga_no_excel(nome_empresa)
+                    tela_retorna_menu()
+
+                if values['linkedin']:
+                    limpa_excel()
+                    window.close()
+                    nome_empresa = values['nome_empresa']
+                    busca_linkedin(nome_empresa)
+                    joga_no_excel(nome_empresa)
+                    tela_retorna_menu()
+
+                if values['todas']:
+
+                    limpa_excel()
+                    window.close()
+                    nome_empresa = values['nome_empresa']
+                    config_navegacao(nome_empresa)
+                    captura_vagas()
+                    busca_linkedin(nome_empresa)
+                    joga_no_excel(nome_empresa)
+                    tela_retorna_menu()
+
+
+                
 
     return nome_empresa
 
@@ -262,7 +286,7 @@ def busca_linkedin(nome_empresa):
         empresa_buscada = pesquisa_linkedin.text
         pesquisa_linkedin.click()
 
-        print(empresa_buscada)
+        print(empresa_buscada) 
 
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
         filtro_linkedin.click()
@@ -285,11 +309,11 @@ def busca_linkedin(nome_empresa):
                 bot.wait(4000)
                 seleciona_caixinha.click()
 
-        
         bot.wait(3000)
         clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
         clica_concluir.click()
         bot.wait(5000)
+
         ### Começa aqui a etapa de capturar as vagas
 
         ## O número de scrolladas deve ser igual a o número de vagas dividido por 25 (Que é o número máximo de páginas abertas)
