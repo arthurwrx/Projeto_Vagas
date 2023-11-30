@@ -20,11 +20,16 @@ tipos_vagas = []
 #Linkedin
 nome_das_vagas_linkedin = []
 localidades_das_vagas_linkedin = []
-
 num_vagas = 0
 nome_das_vagas_linkedin_selector = []
 
+#Glassdoor
 
+nome_das_vagas_glassdoor = []
+localidades_das_vagas_glassdoor = []
+salario_das_vagas_glassdoor = []
+# email = ""
+# senha = ""
 
 #Outras Variáveis
 
@@ -34,12 +39,15 @@ hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%Mm'))
 ##Controle da tela
 def tela_inicial():
 
+
     if __name__ == "__main__":
+        email = ""
+        senha = ""
         
         sg.change_look_and_feel('Gray Gray Gray')
 
         tamanho_botao = (15,2)
-        tamanho_caixa = (10,5)
+
 
     
         layout = [
@@ -49,12 +57,13 @@ def tela_inicial():
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
             [sg.Radio('Gupy', key='gupy', default=True,group_id='plataforma')],
             [sg.Radio('Linkedin', key='linkedin',group_id='plataforma')],
+            [sg.Radio('Glassdoor', key='glassdoor',group_id='plataforma')],
             [sg.Radio('Todas', key='todas',group_id='plataforma')],
             [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em EXECUTAR para prosseguir')]], justification='center')],
             [sg.Text('')],
             [
             sg.Column([[sg.Button('Executar', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
-            #  sg.Column([[sg.Button('Reiniciar', size=tamanho_botao,font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')]]
+
             ]]
         
 
@@ -84,6 +93,16 @@ def tela_inicial():
                     busca_linkedin(nome_empresa)
                     joga_no_excel(nome_empresa)
                     tela_retorna_menu()
+                
+                if values['glassdoor']:
+                    limpa_excel()
+                    window.close()
+                    nome_empresa = values['nome_empresa']
+                    login_glassdoor(nome_empresa)
+                    glassdoor_empregos(nome_empresa,email,senha)
+                    glassdoor_captura_vagas()
+                    joga_no_excel(nome_empresa)
+                    tela_retorna_menu()
 
                 if values['todas']:
 
@@ -93,6 +112,9 @@ def tela_inicial():
                     config_navegacao(nome_empresa)
                     captura_vagas()
                     busca_linkedin(nome_empresa)
+                    login_glassdoor(nome_empresa)
+                    glassdoor_empregos(nome_empresa,email,senha)
+                    glassdoor_captura_vagas()
                     joga_no_excel(nome_empresa)
                     tela_retorna_menu()
 
@@ -190,9 +212,9 @@ def captura_vagas():
 def joga_no_excel(nome_empresa):
 
     workbook = openpyxl.Workbook()
-    
-    if nome_das_vagas != "":
 
+    if nome_das_vagas != []:
+        
         sheet_gupy = workbook.create_sheet(title="Gupy")
         sheet_gupy.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
         
@@ -202,28 +224,37 @@ def joga_no_excel(nome_empresa):
                     'B':localidades_das_vagas[i],
                     'C':tipos_vagas[i]
                 })
-    
-    if nome_das_vagas_linkedin != "":
+            
+    if nome_das_vagas_linkedin != []:
 
         sheet_linkedin = workbook.create_sheet(title="Linkedin")
         sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
-        print()
+
 
         for i in range(len(nome_das_vagas_linkedin)):
-            print(nome_das_vagas_linkedin[i])
             sheet_linkedin.append({
             'A':nome_das_vagas_linkedin[i],
             'B':localidades_das_vagas_linkedin[i],
         })
+            
+    if nome_das_vagas_glassdoor != []:
+
+        sheet_glassdoor = workbook.create_sheet(title="Glassdoor")
+        sheet_glassdoor.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
     
+        for i in range(len(nome_das_vagas_glassdoor)):
+                sheet_glassdoor.append({
+                    'A':nome_das_vagas_glassdoor[i],
+                    'B':localidades_das_vagas_glassdoor[i],
+                })
+
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
     
-
 ## Função a limpar as listas do excel
 def limpa_excel():
  
-    global nome_das_vagas, localidades_das_vagas, tipos_vagas, nome_das_vagas_linkedin,localidades_das_vagas_linkedin,tipos_vagas_linkedin
+    global nome_das_vagas, localidades_das_vagas, tipos_vagas, nome_das_vagas_linkedin,localidades_das_vagas_linkedin,tipos_vagas_linkedin,email,senha
     nome_das_vagas = []
     localidades_das_vagas = []
     tipos_vagas = []
@@ -244,7 +275,8 @@ def tela_retorna_menu():
 
     
         layout = [
-            
+
+            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Deseja consultar mais alguma empresa?',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Text('')],
             [
@@ -270,6 +302,7 @@ def tela_retorna_menu():
                 break
             
 def busca_linkedin(nome_empresa):
+        
         
         bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
         bot.wait(3000)
@@ -365,9 +398,122 @@ def busca_linkedin(nome_empresa):
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin_selector[i]
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin.text
             localidades_das_vagas_linkedin.append(localizacao_atuacao_linkedin)
-           
+
+def glassdoor_empregos(nome_empresa,email,senha):
+
+        bot.browse('https://www.glassdoor.com.br/profile/login_input.htm')
+        bot.wait(3000)
+
+        login_gdempregos = bot.find_element("//*[@id='inlineUserEmail']",By.XPATH)
+        login_gdempregos.send_keys(email)
+        bot.wait(1000)
+        bot.enter()
+
+        login_gdempregos = bot.find_element("//*[@id='inlineUserPassword']",By.XPATH)
+        bot.wait(2000)
+        login_gdempregos.send_keys(senha)
+        bot.wait(2000)
+        bot.enter()
+
+        pesquisa_gdempregos = bot.find_element('//*[@id="ContentNav"]/li[2]/a',By.XPATH)
+        bot.wait(2000)
+        pesquisa_gdempregos.click()
+
+        pesquisa_gdempregos = bot.find_element("//input[@aria-label='Buscar empresa']",By.XPATH)
+        pesquisa_gdempregos.send_keys(nome_empresa)
+
+        pesquisa_gdempregos = bot.find_element('//*[@id="Explore"]/div[2]/div/div/div[2]/div/div/div/ul/li[1]',By.XPATH)
+        bot.type_down()
+        bot.enter()
+
+        pesquisa_gdempregos = bot.find_element('//a[@data-test="ei-nav-jobs-link"]',By.XPATH)
+        pesquisa_gdempregos.click()
+
+def glassdoor_captura_vagas():
+
+    nome_das_vagas_glassdoor_selector = bot.find_elements("//div[contains(@class, 'job-title') and contains(@id, 'job-title-')]",By.XPATH)
+    localidades_das_vagas_glassdoor_selector = bot.find_elements("//div[contains(@class, 'location') and contains(@id, 'job-location-')]",By.XPATH)
+    salario_das_vagas_glassdoor_selector = bot.find_elements("//div[@class='salary-estimate' and @data-test='detailSalary']",By.XPATH)
+
+    for i in range(len(nome_das_vagas_glassdoor_selector)):
+
+        ##Captura título da vaga
+        nome_da_vaga_glassdoor = nome_das_vagas_glassdoor_selector[i]
+        nome_da_vaga_glassdoor = nome_da_vaga_glassdoor.text
+        nome_das_vagas_glassdoor.append(nome_da_vaga_glassdoor)
+        
+
+        ##Captura localidade da vaga
+        localidade_da_vaga_glassdoor = localidades_das_vagas_glassdoor_selector[i]
+        localidade_da_vaga_glassdoor = localidade_da_vaga_glassdoor.text
+        localidades_das_vagas_glassdoor.append(localidade_da_vaga_glassdoor)
+
+        # try:
+        #     salario_glassdoor = salario_das_vagas_glassdoor_selector[i]
+        #     salario_glassdoor = salario_glassdoor.text
+        #     salario_das_vagas_glassdoor.append(salario_glassdoor)
+
+        # except:
+        #         salario_das_vagas_glassdoor.append("")
+        
+    try: 
+        proxima_pagina_glassdoor = bot.find_element("//button[@aria-label='Next']",By.XPATH)
+        if proxima_pagina_glassdoor.is_enabled():
+            proxima_pagina_glassdoor.click()
+            bot.key_esc()
+            bot.key_esc()
+            bot.key_esc()
+            glassdoor_captura_vagas()
+    except:
+        pass
+
+def login_glassdoor(nome_empresa):
+
+    if __name__ == "__main__":
+        
+        sg.change_look_and_feel('Gray Gray Gray')
+
+        tamanho_botao = (15,2)
+    
+        layout = [
+
+            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Text('Digite seu email e senha do GlassDoor',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Text('')],
+            [sg.Text('Email de Login: '), sg.InputText(key="login")],
+            [sg.Text('Senha:             '), sg.InputText(key="senha")],
+            [sg.Text('')],
+            [sg.Text('')],
+            [sg.Column([[sg.Button('Login', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')],
+        ]
+
+        window = sg.Window('Arthur',layout, size=(550, 350))
+        
+
+        while True: 
+            event, values = window.read()
+            
+            if event == sg.WIN_CLOSED:
+                break
+
+            elif event == 'Login':
+                window.close()
+                email = values['login']
+                senha = values['senha']
+                glassdoor_empregos(nome_empresa,email,senha)
+                glassdoor_captura_vagas()
+                joga_no_excel(nome_empresa)
+                tela_retorna_menu()
+
+            
+            else:
+                window.close()
+        
+    return email,senha
 
 tela_inicial()
+
+
 
 
 
