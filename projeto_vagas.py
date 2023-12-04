@@ -97,10 +97,7 @@ def tela_inicial():
                     window.close()
                     nome_empresa = values['nome_empresa']
                     login_glassdoor(nome_empresa)
-                    glassdoor_empregos(nome_empresa,email,senha)
-                    glassdoor_captura_vagas()
-                    joga_no_excel(nome_empresa)
-                    tela_retorna_menu()
+
 
                 if values['todas']:
 
