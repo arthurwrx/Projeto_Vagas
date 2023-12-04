@@ -49,7 +49,7 @@ def tela_inicial():
 
     
         layout = [
-            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Dicas',font=('Helvetica', 10, 'bold'))]], justification='center')],
@@ -278,7 +278,7 @@ def tela_retorna_menu():
     
         layout = [
 
-            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Deseja consultar mais alguma empresa?',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Text('')],
             [
@@ -496,7 +496,7 @@ def login_glassdoor(nome_empresa):
     
         layout = [
 
-            [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Digite seu email e senha do GlassDoor',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Text('')],
             [sg.Text('Email de Login: '), sg.InputText(key="login")],
