@@ -296,29 +296,11 @@ def busca_linkedin(nome_empresa):
         bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
         bot.wait(3000)
         pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
-
         pesquisa_linkedin.clear()
-
-        for char in nome_empresa:
-            pesquisa_linkedin.send_keys(char)
-            time.sleep(0.3)
         bot.wait(2000)
-
-        
-
-
-        try:
-            bot.space()
-            bot.wait(2000)
-            bot.type_down()
-            pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
-            empresa_buscada = pesquisa_linkedin.text
-            bot.enter()
-            bot.wait(4000)
-            
-        except:
-            pass
-
+        pesquisa_linkedin.send_keys(nome_empresa)
+        bot.wait(2000)
+        bot.enter()
         bot.wait(3000)
 
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
@@ -338,7 +320,7 @@ def busca_linkedin(nome_empresa):
 
 
             try:
-                if empresa_tratada == empresa_buscada:
+                if empresa_tratada.lower() == nome_empresa.lower():
                     bot.wait(4000)
                     print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
                     seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
