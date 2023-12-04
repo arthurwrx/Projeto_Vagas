@@ -22,14 +22,13 @@ nome_das_vagas_linkedin = []
 localidades_das_vagas_linkedin = []
 num_vagas = 0
 nome_das_vagas_linkedin_selector = []
+data_publicacoes_linkedin = []
 
 #Glassdoor
 
 nome_das_vagas_glassdoor = []
 localidades_das_vagas_glassdoor = []
 salario_das_vagas_glassdoor = []
-# email = ""
-# senha = ""
 
 #Outras Variáveis
 
@@ -41,9 +40,8 @@ def tela_inicial():
 
 
     if __name__ == "__main__":
-        email = ""
-        senha = ""
-        
+
+
         sg.change_look_and_feel('Gray Gray Gray')
 
         tamanho_botao = (15,2)
@@ -113,10 +111,6 @@ def tela_inicial():
                     captura_vagas()
                     busca_linkedin(nome_empresa)
                     login_glassdoor(nome_empresa)
-                    glassdoor_empregos(nome_empresa,email,senha)
-                    glassdoor_captura_vagas()
-                    joga_no_excel(nome_empresa)
-                    tela_retorna_menu()
 
 
                 
@@ -228,13 +222,14 @@ def joga_no_excel(nome_empresa):
     if nome_das_vagas_linkedin != []:
 
         sheet_linkedin = workbook.create_sheet(title="Linkedin")
-        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
+        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade','C':'Quando foi publicada?'})
 
 
         for i in range(len(nome_das_vagas_linkedin)):
             sheet_linkedin.append({
             'A':nome_das_vagas_linkedin[i],
             'B':localidades_das_vagas_linkedin[i],
+            'C':data_publicacoes_linkedin[i]
         })
             
     if nome_das_vagas_glassdoor != []:
@@ -248,6 +243,9 @@ def joga_no_excel(nome_empresa):
                     'B':localidades_das_vagas_glassdoor[i],
                 })
 
+     # Verifique se a planilha "Sheet" existe antes de tentar removê-la
+    if "Sheet" in workbook.sheetnames:
+        workbook.remove_sheet(workbook["Sheet"])
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
     
@@ -314,6 +312,8 @@ def busca_linkedin(nome_empresa):
             pesquisa_linkedin.send_keys(char)
             time.sleep(0.3)
         try:
+            pesquisa_linkedin.click()
+            pesquisa_linkedin.click()
             pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
             bot.wait(4000)
             empresa_buscada = pesquisa_linkedin.text
@@ -335,6 +335,7 @@ def busca_linkedin(nome_empresa):
             lista_checkbox_linkedin = f"//*[@id='f_C-{str(i)}']"
             empresa_filtrada = empresa_filtrada.text
             empresa_tratada = empresa_filtrada.split("(", 1)[0].strip()
+
 
             try:
                 if empresa_tratada == empresa_buscada:
@@ -384,6 +385,7 @@ def busca_linkedin(nome_empresa):
 
         nome_das_vagas_linkedin_selector = bot.find_elements("//h3[@class='base-search-card__title']",By.XPATH)
         localizacao_atuacao_linkedin_selector = bot.find_elements("//span[@class='job-search-card__location']",By.XPATH)
+        data_publi_linkedin_selector = bot.find_elements("//time[contains(@class, 'job-search-card__listdate')]",By.XPATH) 
 
 
         for i in range(len(nome_das_vagas_linkedin_selector)):
@@ -398,6 +400,13 @@ def busca_linkedin(nome_empresa):
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin_selector[i]
             localizacao_atuacao_linkedin = localizacao_atuacao_linkedin.text
             localidades_das_vagas_linkedin.append(localizacao_atuacao_linkedin)
+
+            ##Captura data de publicação da vaga
+            data_publi_linkedin = data_publi_linkedin_selector[i]
+            data_publi_linkedin = data_publi_linkedin.text
+            data_publicacoes_linkedin.append(data_publi_linkedin)
+
+
 
 def glassdoor_empregos(nome_empresa,email,senha):
 
