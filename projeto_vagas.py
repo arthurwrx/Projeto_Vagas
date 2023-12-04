@@ -35,7 +35,7 @@ salario_das_vagas_glassdoor = []
 bot = WebBot()
 hoje = str(datetime.datetime.now().strftime('%d.%m.%Y %Hh%Mm'))
 
-##Controle da tela
+##Controles de tela
 def tela_inicial():
 
 
@@ -85,7 +85,7 @@ def tela_inicial():
                     nome_empresa = values['nome_empresa']
                     config_navegacao(nome_empresa)
                     captura_vagas()
-                    joga_no_excel(nome_empresa)
+                    joga_no_excel_gupy(nome_empresa)
                     tela_retorna_menu()
 
                 if values['linkedin']:
@@ -93,7 +93,7 @@ def tela_inicial():
                     window.close()
                     nome_empresa = values['nome_empresa']
                     busca_linkedin(nome_empresa)
-                    joga_no_excel(nome_empresa)
+                    joga_no_excel_linkedin(nome_empresa)
                     tela_retorna_menu()
                 
                 if values['glassdoor']:
@@ -112,13 +112,99 @@ def tela_inicial():
                     captura_vagas()
                     busca_linkedin(nome_empresa)
                     login_glassdoor(nome_empresa)
+                    joga_no_excel_gupy(nome_empresa)
+                    joga_no_excel_linkedin(nome_empresa)
 
 
                 
 
     return nome_empresa
 
-## Função destinada a iniciar o navegador e entrar no site da gupy
+def tela_retorna_menu():
+
+    if __name__ == "__main__":
+        
+        sg.change_look_and_feel('Gray Gray Gray')
+
+        tamanho_botao = (15,2)
+        tamanho_caixa = (10,5)
+
+    
+        layout = [
+
+            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Text('Deseja consultar mais alguma empresa?',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Text('')],
+            [
+            sg.Column([[sg.Button('Sim', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
+             sg.Column([[sg.Button('Não', size=tamanho_botao,font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')]]
+        
+
+        window = sg.Window('CNPJ',layout, size=(700, 225))
+        
+
+        while True: 
+            event, values = window.read()
+            if event == sg.WIN_CLOSED:
+                break
+
+            elif event == 'Sim':
+                window.close()
+                tela_inicial()
+                
+
+            elif event == 'Não':
+                window.close()
+                break
+
+def login_glassdoor(nome_empresa):
+
+
+    if __name__ == "__main__":
+        
+        sg.change_look_and_feel('Gray Gray Gray')
+
+        tamanho_botao = (15,2)
+    
+        layout = [
+
+            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
+            [sg.Column([[sg.Text('Digite seu email e senha do GlassDoor',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Text('')],
+            [sg.Text('Email de Login: '), sg.InputText(key="login")],
+            [sg.Text('Senha:             '), sg.InputText(key="senha")],
+            [sg.Text('')],
+            [sg.Text('')],
+            [sg.Column([[sg.Button('Login', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')],
+        ]
+
+        window = sg.Window('Arthur',layout, size=(550, 350))
+        
+
+        while True: 
+            event, values = window.read()
+            
+            if event == sg.WIN_CLOSED:
+                break
+
+            elif event == 'Login':
+                window.close()
+                email = values['login']
+                senha = values['senha']
+                glassdoor_empregos(nome_empresa,email,senha)
+                glassdoor_captura_vagas()
+                joga_no_excel_glassdoor(nome_empresa)
+                tela_retorna_menu()
+
+            
+            else:
+                window.close()
+        
+    return email,senha
+
+
+
+##Funções destinadas a navegação
 def config_navegacao(nome_empresa):
 
     # Configure whether or not to run on headless mode.
@@ -168,7 +254,6 @@ def config_navegacao(nome_empresa):
     except:
         pass
 
-## Função destinada a capturar os detalhes da vaga da empresa desejada
 def captura_vagas():
    
     i = 1
@@ -204,104 +289,6 @@ def captura_vagas():
 
     except:
         print("capturamos tudo")
-
-## Função destinada a dispor as informações no excel
-def joga_no_excel(nome_empresa):
-
-    workbook = openpyxl.Workbook()
-
-    if nome_das_vagas != []:
-        
-        sheet_gupy = workbook.create_sheet(title="Gupy")
-        sheet_gupy.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
-        
-        for i in range(len(tipos_vagas)):
-                sheet_gupy.append({
-                    'A':nome_das_vagas[i],
-                    'B':localidades_das_vagas[i],
-                    'C':tipos_vagas[i]
-                })
-            
-    if nome_das_vagas_linkedin != []:
-
-        sheet_linkedin = workbook.create_sheet(title="Linkedin")
-        sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade','C':'Quando foi publicada?'})
-
-
-        for i in range(len(nome_das_vagas_linkedin)):
-            sheet_linkedin.append({
-            'A':nome_das_vagas_linkedin[i],
-            'B':localidades_das_vagas_linkedin[i],
-            'C':data_publicacoes_linkedin[i]
-        })
-            
-    if nome_das_vagas_glassdoor != []:
-
-        sheet_glassdoor = workbook.create_sheet(title="Glassdoor")
-        sheet_glassdoor.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
-    
-        for i in range(len(nome_das_vagas_glassdoor)):
-                sheet_glassdoor.append({
-                    'A':nome_das_vagas_glassdoor[i],
-                    'B':localidades_das_vagas_glassdoor[i],
-                })
-
-     # Verifique se a planilha "Sheet" existe antes de tentar removê-la
-    if "Sheet" in workbook.sheetnames:
-        workbook.remove_sheet(workbook["Sheet"])
-
-    workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
-    
-
-## Função a limpar as listas do excel
-def limpa_excel():
- 
-    global nome_das_vagas, localidades_das_vagas, tipos_vagas, nome_das_vagas_linkedin,localidades_das_vagas_linkedin,tipos_vagas_linkedin,email,senha
-    nome_das_vagas = []
-    localidades_das_vagas = []
-    tipos_vagas = []
-
-    nome_das_vagas_linkedin = []
-    localidades_das_vagas_linkedin = []
-    tipos_vagas_linkedin = []
-
-## pergunta se o usuário quer fazer mais uma pesquisa
-def tela_retorna_menu():
-
-    if __name__ == "__main__":
-        
-        sg.change_look_and_feel('Gray Gray Gray')
-
-        tamanho_botao = (15,2)
-        tamanho_caixa = (10,5)
-
-    
-        layout = [
-
-            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
-            [sg.Column([[sg.Text('Deseja consultar mais alguma empresa?',font=('Helvetica', 12 ,'bold'))]], justification='center')],
-            [sg.Text('')],
-            [
-            sg.Column([[sg.Button('Sim', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
-             sg.Column([[sg.Button('Não', size=tamanho_botao,font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')]]
-        
-
-        window = sg.Window('CNPJ',layout, size=(700, 225))
-        
-
-        while True: 
-            event, values = window.read()
-            if event == sg.WIN_CLOSED:
-                break
-
-            elif event == 'Sim':
-                window.close()
-                tela_inicial()
-                
-
-            elif event == 'Não':
-                window.close()
-                break
             
 def busca_linkedin(nome_empresa):
         
@@ -316,6 +303,10 @@ def busca_linkedin(nome_empresa):
             pesquisa_linkedin.send_keys(char)
             time.sleep(0.3)
         bot.wait(2000)
+
+        
+
+
         try:
             bot.space()
             bot.wait(2000)
@@ -324,7 +315,6 @@ def busca_linkedin(nome_empresa):
             empresa_buscada = pesquisa_linkedin.text
             bot.enter()
             bot.wait(4000)
-            
             
         except:
             pass
@@ -416,8 +406,6 @@ def busca_linkedin(nome_empresa):
             data_publi_linkedin = data_publi_linkedin.text
             data_publicacoes_linkedin.append(data_publi_linkedin)
 
-
-
 def glassdoor_empregos(nome_empresa,email,senha):
 
         bot.browse('https://www.glassdoor.com.br/profile/login_input.htm')
@@ -439,9 +427,16 @@ def glassdoor_empregos(nome_empresa,email,senha):
         pesquisa_gdempregos.click()
 
         pesquisa_gdempregos = bot.find_element("//input[@aria-label='Buscar empresa']",By.XPATH)
-        pesquisa_gdempregos.send_keys(nome_empresa)
+
+        for char in nome_empresa:
+            pesquisa_gdempregos.send_keys(char)
+            time.sleep(0.3)
+
+        bot.wait(2000)
 
         pesquisa_gdempregos = bot.find_element('//*[@id="Explore"]/div[2]/div/div/div[2]/div/div/div/ul/li[1]',By.XPATH)
+        bot.space()
+        bot.wait(2000)
         bot.type_down()
         bot.enter()
 
@@ -486,49 +481,85 @@ def glassdoor_captura_vagas():
     except:
         pass
 
-def login_glassdoor(nome_empresa):
 
-    if __name__ == "__main__":
-        
-        sg.change_look_and_feel('Gray Gray Gray')
 
-        tamanho_botao = (15,2)
+
+## Sessão Excel
+def joga_no_excel_gupy(nome_empresa):
+
+    workbook = openpyxl.Workbook()
+
+    sheet_gupy = workbook.create_sheet(title="Gupy")
+    sheet_gupy.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
     
-        layout = [
+    for i in range(len(tipos_vagas)):
+            sheet_gupy.append({
+                'A':nome_das_vagas[i],
+                'B':localidades_das_vagas[i],
+                'C':tipos_vagas[i]
+            })
 
-            [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
-            [sg.Column([[sg.Text('Digite seu email e senha do GlassDoor',font=('Helvetica', 12 ,'bold'))]], justification='center')],
-            [sg.Text('')],
-            [sg.Text('Email de Login: '), sg.InputText(key="login")],
-            [sg.Text('Senha:             '), sg.InputText(key="senha")],
-            [sg.Text('')],
-            [sg.Text('')],
-            [sg.Column([[sg.Button('Login', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')],
-        ]
+    # Verifique se a planilha "Sheet" existe antes de tentar removê-la
+    if "Sheet" in workbook.sheetnames:
+        workbook.remove_sheet(workbook["Sheet"])
 
-        window = sg.Window('Arthur',layout, size=(550, 350))
-        
-
-        while True: 
-            event, values = window.read()
+    workbook.save(filename=f"{nome_empresa} Gupy {hoje}.xlsx")
             
-            if event == sg.WIN_CLOSED:
-                break
 
-            elif event == 'Login':
-                window.close()
-                email = values['login']
-                senha = values['senha']
-                glassdoor_empregos(nome_empresa,email,senha)
-                glassdoor_captura_vagas()
-                joga_no_excel(nome_empresa)
-                tela_retorna_menu()
+def joga_no_excel_linkedin(nome_empresa):
 
-            
-            else:
-                window.close()
-        
-    return email,senha
+    workbook = openpyxl.Workbook()
+
+    sheet_linkedin = workbook.create_sheet(title="Linkedin")
+    sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade','C':'Quando foi publicada?'})
+
+
+    for i in range(len(nome_das_vagas_linkedin)):
+        sheet_linkedin.append({
+        'A':nome_das_vagas_linkedin[i],
+        'B':localidades_das_vagas_linkedin[i],
+        'C':data_publicacoes_linkedin[i]
+    })
+    
+# Verifique se a planilha "Sheet" existe antes de tentar removê-la
+    if "Sheet" in workbook.sheetnames:
+        workbook.remove_sheet(workbook["Sheet"])
+
+    workbook.save(filename=f"{nome_empresa} Linkedin {hoje}.xlsx")
+
+def joga_no_excel_glassdoor(nome_empresa):
+
+    workbook = openpyxl.Workbook()
+
+    sheet_glassdoor = workbook.create_sheet(title="Glassdoor")
+    sheet_glassdoor.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
+
+    for i in range(len(nome_das_vagas_glassdoor)):
+            sheet_glassdoor.append({
+                'A':nome_das_vagas_glassdoor[i],
+                'B':localidades_das_vagas_glassdoor[i],
+            })
+
+# Verifique se a planilha "Sheet" existe antes de tentar removê-la
+    if "Sheet" in workbook.sheetnames:
+        workbook.remove_sheet(workbook["Sheet"])
+
+    workbook.save(filename=f"{nome_empresa} Glassdoor {hoje}.xlsx")
+
+def limpa_excel():
+ 
+    global nome_das_vagas, localidades_das_vagas, tipos_vagas, nome_das_vagas_linkedin,localidades_das_vagas_linkedin,tipos_vagas_linkedin,email,senha,nome_das_vagas_glassdoor,localidades_das_vagas_glassdoor,salario_das_vagas_glassdoor
+    nome_das_vagas = []
+    localidades_das_vagas = []
+    tipos_vagas = []
+
+    nome_das_vagas_linkedin = []
+    localidades_das_vagas_linkedin = []
+    tipos_vagas_linkedin = []
+
+    nome_das_vagas_glassdoor = []
+    localidades_das_vagas_glassdoor = []
+    salario_das_vagas_glassdoor = []
 
 tela_inicial()
 
