@@ -53,8 +53,9 @@ def tela_inicial():
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Dicas',font=('Helvetica', 10, 'bold'))]], justification='center')],
-            [sg.Column([[sg.Text('01 - Escreva o nome da empresa idêntica a forma que está no Linkedin, \nvocê terá uma pesquisa mais precisa',font=('Helvetica', 10, 'bold'))]], justification='center')],
-            [sg.Column([[sg.Text('02 - Verifique se a empresa que você quer existe na Gupy antes de iniciar',font=('Helvetica', 10, 'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('01 - Escreva o nome da empresa idêntica a forma que está no Linkedin, \nvocê terá uma pesquisa mais precisa',font=('Helvetica', 10, ))]], justification='center')],
+            [sg.Column([[sg.Text('02 - Verifique se a empresa que você quer existe na Gupy antes de iniciar',font=('Helvetica', 10))]], justification='center')],
+            [sg.Column([[sg.Text('03 - Para a função Glassdoor funcionar, você precisa ter uma conta no site.',font=('Helvetica', 10))]], justification='center')],
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
             [sg.Radio('Gupy', key='gupy', default=True,group_id='plataforma')],
             [sg.Radio('Linkedin', key='linkedin',group_id='plataforma')],
@@ -76,7 +77,7 @@ def tela_inicial():
             if event == sg.WIN_CLOSED:
                 break
 
-            elif event == 'Executar':
+            elif event == 'Começar!':
 
                 if values['gupy']:
                     limpa_excel()
@@ -251,7 +252,6 @@ def joga_no_excel(nome_empresa):
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
     
-    bot.close_page()
 
 ## Função a limpar as listas do excel
 def limpa_excel():
@@ -326,7 +326,10 @@ def busca_linkedin(nome_empresa):
         except:
             pass
 
+        bot.wait(3000)
+
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
+        bot.wait(2000)
         filtro_linkedin.click()
 
         lista_filtros_linkedin = bot.find_elements("//div[@aria-label='Opções de filtro de Empresa.']/div[@class='filter-values-container__filter-value']",By.XPATH)
@@ -446,7 +449,7 @@ def glassdoor_captura_vagas():
 
     nome_das_vagas_glassdoor_selector = bot.find_elements("//div[contains(@class, 'job-title') and contains(@id, 'job-title-')]",By.XPATH)
     localidades_das_vagas_glassdoor_selector = bot.find_elements("//div[contains(@class, 'location') and contains(@id, 'job-location-')]",By.XPATH)
-    salario_das_vagas_glassdoor_selector = bot.find_elements("//div[@class='salary-estimate' and @data-test='detailSalary']",By.XPATH)
+    # salario_das_vagas_glassdoor_selector = bot.find_elements("//div[@class='salary-estimate' and @data-test='detailSalary']",By.XPATH)
 
     for i in range(len(nome_das_vagas_glassdoor_selector)):
 
