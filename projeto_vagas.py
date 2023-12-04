@@ -52,20 +52,23 @@ def tela_inicial():
             [sg.Column([[sg.Image(r'C:\Projetos Python\Projeto_Vagas\Logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Bem vindo a Automação de Buscas de Vagas Abertas!',font=('Helvetica', 12 ,'bold'))]], justification='center')],
             [sg.Column([[sg.Text('Antes de começar, digite o nome da empresa desejada:',font=('Helvetica', 10, 'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('Dicas',font=('Helvetica', 10, 'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('01 - Escreva o nome da empresa idêntica a forma que está no Linkedin, \nvocê terá uma pesquisa mais precisa',font=('Helvetica', 10, 'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('02 - Verifique se a empresa que você quer existe na Gupy antes de iniciar',font=('Helvetica', 10, 'bold'))]], justification='center')],
             [sg.Text('Empresa desejada: '), sg.InputText(key="nome_empresa")],
             [sg.Radio('Gupy', key='gupy', default=True,group_id='plataforma')],
             [sg.Radio('Linkedin', key='linkedin',group_id='plataforma')],
             [sg.Radio('Glassdoor', key='glassdoor',group_id='plataforma')],
             [sg.Radio('Todas', key='todas',group_id='plataforma')],
-            [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em EXECUTAR para prosseguir')]], justification='center')],
+            [sg.Column([[sg.Text('Se você já escolheu a empresa, clique em COMEÇAR! para prosseguir')]], justification='center')],
             [sg.Text('')],
             [
-            sg.Column([[sg.Button('Executar', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
+            sg.Column([[sg.Button('Começar!', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center'),
 
             ]]
         
 
-        window = sg.Window('CNPJ',layout, size=(700, 450))
+        window = sg.Window('CNPJ',layout, size=(700, 550))
         
 
         while True: 
