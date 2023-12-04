@@ -128,7 +128,7 @@ def config_navegacao(nome_empresa):
     download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
     
     # Opens the browser on the BotCity website.
-    bot.start_browser()
+    
     bot.browse("https://www.google.com/")
                                       
     ## Abre o google
@@ -315,14 +315,17 @@ def busca_linkedin(nome_empresa):
         for char in nome_empresa:
             pesquisa_linkedin.send_keys(char)
             time.sleep(0.3)
+        bot.wait(2000)
         try:
-            pesquisa_linkedin.click()
-            pesquisa_linkedin.click()
+            bot.space()
+            bot.wait(2000)
+            bot.type_down()
             pesquisa_linkedin = bot.find_element("//*[@id='keywords-1']",By.XPATH)
-            bot.wait(4000)
             empresa_buscada = pesquisa_linkedin.text
-            pesquisa_linkedin.click()
-
+            bot.enter()
+            bot.wait(4000)
+            
+            
         except:
             pass
 
