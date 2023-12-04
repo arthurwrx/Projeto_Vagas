@@ -127,7 +127,7 @@ def config_navegacao(nome_empresa):
     download_folder_path = r'C:\Projetos Python\Projeto_Vagas\downloads'
     
     # Opens the browser on the BotCity website.
-    
+    bot.start_browser()
     bot.browse("https://www.google.com/")
                                       
     ## Abre o google
@@ -142,8 +142,10 @@ def config_navegacao(nome_empresa):
         pesquisa_google_button.click()
     
     except:
-        pesquisa_google_button = bot.find_element("html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[1]", By.XPATH)
+        pesquisa_google_button = bot.find_element("//div[@aria-label='Ferramentas de inserção de texto']",By.XPATH)
+        pesquisa_google_button.click()
         bot.wait(2000)
+        pesquisa_google_button = bot.find_element("html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[1]", By.XPATH)
         pesquisa_google_button.click()
 
     ##Site Gupy                  
@@ -249,6 +251,8 @@ def joga_no_excel(nome_empresa):
 
     workbook.save(filename=f"{nome_empresa} {hoje}.xlsx")
     
+    bot.close_page()
+
 ## Função a limpar as listas do excel
 def limpa_excel():
  
