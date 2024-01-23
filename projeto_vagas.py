@@ -101,6 +101,7 @@ def tela_inicial():
                     window.close()
                     nome_empresa = values['nome_empresa']
                     login_glassdoor(nome_empresa)
+                    joga_no_excel_glassdoor(nome_empresa)
 
 
                 if values['todas']:
@@ -112,13 +113,8 @@ def tela_inicial():
                     captura_vagas()
                     busca_linkedin(nome_empresa)
                     login_glassdoor(nome_empresa)
-                    joga_no_excel_gupy(nome_empresa)
-                    joga_no_excel_linkedin(nome_empresa)
+                    joga_no_excel_todos(nome_empresa)
 
-
-                
-
-    return nome_empresa
 
 def tela_retorna_menu():
 
@@ -170,6 +166,7 @@ def login_glassdoor(nome_empresa):
 
             [sg.Column([[sg.Image(r'logo\logo-assinatura.png')]], justification='center')],
             [sg.Column([[sg.Text('Digite seu email e senha do GlassDoor',font=('Helvetica', 12 ,'bold'))]], justification='center')],
+            [sg.Column([[sg.Text('Caso não tenha, crie sua conta no site e complete o cadastro antes de iniciar a automação.',font=('Helvetica', 9 ,'bold'))]], justification='center')],
             [sg.Text('')],
             [sg.Text('Email de Login: '), sg.InputText(key="login")],
             [sg.Text('Senha:             '), sg.InputText(key="senha")],
@@ -178,7 +175,7 @@ def login_glassdoor(nome_empresa):
             [sg.Column([[sg.Button('Login', size=tamanho_botao, font=('Helvetica', 10, 'bold'))]], justification='center', element_justification='center')],
         ]
 
-        window = sg.Window('Arthur',layout, size=(550, 350))
+        window = sg.Window('Arthur',layout, size=(625, 350))
         
 
         while True: 
@@ -201,8 +198,6 @@ def login_glassdoor(nome_empresa):
                 window.close()
         
     return email,senha
-
-
 
 ##Funções destinadas a navegação
 def config_navegacao(nome_empresa):
@@ -294,6 +289,24 @@ def busca_linkedin(nome_empresa):
         
         
         bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
+
+        login2 = bot.find_element("//h1[contains(text(),'Cadastre-se no LinkedIn')]",By.XPATH)
+
+        login = True
+
+        while login is True:
+
+            try:
+                    login2 = bot.find_element("//h1[contains(text(),'Cadastre-se no LinkedIn')]",By.XPATH)
+                    print(login2.text)
+                    bot.browse('https://www.linkedin.com/jobs/search?keywords=Cia%20de%20talentos&location=Brasil&geoId=106057199&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0')
+                    bot.wait(4000)
+    
+            except:
+                login = False
+                print("passou pelo try")
+                break
+        
         bot.wait(3000)
         pesquisa_linkedin = bot.find_element('//*[@id="job-search-bar-keywords"]',By.XPATH)
         pesquisa_linkedin.clear()
@@ -301,11 +314,41 @@ def busca_linkedin(nome_empresa):
         pesquisa_linkedin.send_keys(nome_empresa)
         bot.wait(2000)
         bot.enter()
-        bot.wait(3000)
+
+        login = True
+
+        while login is True:
+
+            try:
+                    login2 = bot.find_element("//h1[contains(text(),'Cadastre-se no LinkedIn')]",By.XPATH)
+                    print(login2.text)
+                    bot.back()
+                    bot.wait(4000)
+    
+            except:
+                login = False
+                print("passou pelo try")
+                break
 
         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
         bot.wait(2000)
         filtro_linkedin.click()
+        bot.wait(3500)
+        
+        login = True
+
+        while login is True:
+
+            try:
+                    login2 = bot.find_element("//h1[contains(text(),'Cadastre-se no LinkedIn')]",By.XPATH)
+                    print(login2.text)
+                    bot.back()
+                    bot.wait(4000)
+    
+            except:
+                login = False
+                print("passou pelo try")
+                break
 
         lista_filtros_linkedin = bot.find_elements("//div[@aria-label='Opções de filtro de Empresa.']/div[@class='filter-values-container__filter-value']",By.XPATH)
         
@@ -324,20 +367,39 @@ def busca_linkedin(nome_empresa):
                     bot.wait(4000)
                     print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
                     seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
-                    bot.wait(4000)
                     seleciona_caixinha.click()
             except:
                     if empresa_tratada == pesquisa_linkedin.text:
                         bot.wait(4000)
                         print(f"Condição satisfeita em: {empresa_tratada} {empresa_tratada}")
                         seleciona_caixinha = bot.find_element(lista_checkbox_linkedin,By.XPATH)
-                        bot.wait(4000)
                         seleciona_caixinha.click()
 
         bot.wait(3000)
         clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
         clica_concluir.click()
         bot.wait(5000)
+
+        # login = True
+
+        # while login is True:
+
+        #     try:
+        #             login2 = bot.find_element("//h1[contains(text(),'Cadastre-se no LinkedIn')]",By.XPATH)
+        #             print(login2.text)
+        #             bot.back()
+        #             bot.wait(4000)
+    
+        #     except:
+        #         filtro_linkedin = bot.find_element("//button[@aria-label='Filtro Empresa. Clicar neste botão exibe todas as opções de filtro de Empresa.']",By.XPATH)
+        #         bot.wait(3000)
+        #         filtro_linkedin.click()
+        #         clica_concluir = bot.find_element("//*[@id='jserp-filters']/ul/li[2]/div/div/div/button",By.XPATH)
+        #         clica_concluir.click()
+        #         bot.wait(5000)
+
+        #         print("passou pelo try")
+        #         break
 
         ### Começa aqui a etapa de capturar as vagas
 
@@ -346,6 +408,7 @@ def busca_linkedin(nome_empresa):
         num_vagas = f'//span[@class="results-context-header__job-count"]'
         num_vagas_site = bot.find_element(num_vagas,By.XPATH)
         num_vagas = num_vagas_site.text
+        num_vagas = num_vagas.replace('.', '')
         num_vagas = int(num_vagas)
         
         num_scrolls = num_vagas / 25
@@ -362,7 +425,7 @@ def busca_linkedin(nome_empresa):
                 desce_pag += 1
             except:
                 continue
-
+ 
         ## Nesta etapa, ocorre a captura das vagas e jogar na lista
 
         nome_das_vagas_linkedin_selector = bot.find_elements("//h3[@class='base-search-card__title']",By.XPATH)
@@ -442,7 +505,11 @@ def glassdoor_captura_vagas():
         ##Captura localidade da vaga
         localidade_da_vaga_glassdoor = localidades_das_vagas_glassdoor_selector[i]
         localidade_da_vaga_glassdoor = localidade_da_vaga_glassdoor.text
-        localidades_das_vagas_glassdoor.append(localidade_da_vaga_glassdoor)
+
+        if localidade_da_vaga_glassdoor is None or localidade_da_vaga_glassdoor == "":
+             localidades_das_vagas_glassdoor.append("")
+        else:
+            localidades_das_vagas_glassdoor.append(localidade_da_vaga_glassdoor)
 
         # try:
         #     salario_glassdoor = salario_das_vagas_glassdoor_selector[i]
@@ -462,8 +529,6 @@ def glassdoor_captura_vagas():
             glassdoor_captura_vagas()
     except:
         pass
-
-
 
 
 ## Sessão Excel
@@ -487,7 +552,6 @@ def joga_no_excel_gupy(nome_empresa):
 
     workbook.save(filename=f"{nome_empresa} Gupy {hoje}.xlsx")
             
-
 def joga_no_excel_linkedin(nome_empresa):
 
     workbook = openpyxl.Workbook()
@@ -502,12 +566,48 @@ def joga_no_excel_linkedin(nome_empresa):
         'B':localidades_das_vagas_linkedin[i],
         'C':data_publicacoes_linkedin[i]
     })
+        
+def joga_no_excel_todos(nome_empresa):
+
+    workbook = openpyxl.Workbook()
+
+    sheet_gupy = workbook.create_sheet(title="Gupy")
+    sheet_gupy.append({'A': 'Nome da Vaga', 'B': 'Localidade', 'C': 'Tipo de Vaga'})
     
+    for i in range(len(tipos_vagas)):
+            sheet_gupy.append({
+                'A':nome_das_vagas[i],
+                'B':localidades_das_vagas[i],
+                'C':tipos_vagas[i]
+            })
+
+
+    sheet_linkedin = workbook.create_sheet(title="Linkedin")
+    sheet_linkedin.append({'A': 'Nome da Vaga', 'B': 'Localidade','C':'Quando foi publicada?'})
+
+    for i in range(len(nome_das_vagas_linkedin)):
+        sheet_linkedin.append({
+        'A':nome_das_vagas_linkedin[i],
+        'B':localidades_das_vagas_linkedin[i],
+        'C':data_publicacoes_linkedin[i]
+    })
+        
+
+    sheet_glassdoor = workbook.create_sheet(title="Glassdoor")
+    sheet_glassdoor.append({'A': 'Nome da Vaga', 'B': 'Localidade'})
+
+    for i in range(len(nome_das_vagas_glassdoor)):
+            sheet_glassdoor.append({
+                'A':nome_das_vagas_glassdoor[i],
+                'B':localidades_das_vagas_glassdoor[i],
+            })
+
 # Verifique se a planilha "Sheet" existe antes de tentar removê-la
     if "Sheet" in workbook.sheetnames:
         workbook.remove_sheet(workbook["Sheet"])
 
-    workbook.save(filename=f"{nome_empresa} Linkedin {hoje}.xlsx")
+    workbook.save(filename=f"{nome_empresa} Todos os sites {hoje}.xlsx")
+    
 
 def joga_no_excel_glassdoor(nome_empresa):
 
@@ -544,6 +644,10 @@ def limpa_excel():
     salario_das_vagas_glassdoor = []
 
 tela_inicial()
+# busca_linkedin(nome_empresa="Itaú Unibanco")
+
+
+
 
 
 

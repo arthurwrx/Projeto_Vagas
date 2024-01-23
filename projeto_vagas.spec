@@ -34,4 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['C:\\Projetos Python\\Projeto_Vagas\\logo\\CT_ICO.ico'],
 )
